@@ -35,7 +35,18 @@ func TestFindUsersParams(t *testing.T) {
 
 		// [order_by] - error
 		{Id: "Invalid order_by (=InvalidOrderBy)", Params: SearchRequest{OrderField: "InvalidOrderBy", OrderBy: OrderByAsc}, IsError: true},
+
+		// [limit] - success
+		{Id: "Valid limit", Params: SearchRequest{Limit: 1}, IsError: false},
+		// [limit] - error
+		{Id: "Invalid limit (<0)", Params: SearchRequest{Limit: -1}, IsError: true},
+
+		// [offset] - success
+		{Id: "Valid offset", Params: SearchRequest{Offset: 1}, IsError: false},
+		// [offset] - error
+		{Id: "Invalid offset (<0)", Params: SearchRequest{Offset: -1}, IsError: true},
 	}
+
 	server := httptest.NewServer(http.HandlerFunc(SearchServer))
 	client := &SearchClient{
 		URL:         server.URL,

@@ -74,11 +74,7 @@ func SearchServer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Sorting
-	orderBy, err := strconv.Atoi(q.Get("order_by"))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+	orderBy, _ := strconv.Atoi(q.Get("order_by"))
 
 	if !(orderBy == OrderByAsIs || orderBy == OrderByAsc || orderBy == OrderByDesc) {
 		http.Error(w, ErrorBadOrderField, http.StatusBadRequest)
@@ -123,24 +119,26 @@ func SearchServer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Limit
-	limit, err := strconv.Atoi(q.Get("limit"))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	limit, _ := strconv.Atoi(q.Get("limit"))
+
+	if (limit < 0) || (limit > len(users)) {
+		http.Error(w, errTest.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if (limit > 0) && (limit <= len(users)) {
+	if limit != 0 {
 		users = users[:limit]
 	}
 
 	// Offset
-	offset, err := strconv.Atoi(q.Get("offset"))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	offset, _ := strconv.Atoi(q.Get("offset"))
+
+	if (offset < 0) || (offset > len(users)) {
+		http.Error(w, errTest.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if (offset > 0) && (offset <= len(users)) {
+	if offset != 0 {
 		users = users[offset:]
 	}
 
